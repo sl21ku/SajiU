@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>写真の確認</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1e3c72, #001111);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.3);
+    }
+
+    #photo {
+      border: 5px solid #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      margin: 20px;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    button {
+      background: linear-gradient(45deg, #1abc9c, #16a085);
+      color: white;
+      border: none;
+      padding: 14px 22px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, #16a085, #1abc9c);
+      transform: scale(1.05);
+    }
+
+    form {
+      display: inline-block;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>写真の確認</h1>
+
+  <img id="photo" src="" alt="撮影した写真" width="360" height="640">
+
+  <div class="button-container">
+    <form action="/camera" method="get">
+      <button type="submit" id="retake">再撮影</button>
+    </form>
+
+    <button id="ok">OK</button>
+  </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const username = params.get("username");
+        console.log("取得した username:", username);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const photoData = localStorage.getItem('photoData');
+            if (photoData) {
+                document.getElementById('photo').src = photoData;
+            }
+            if(username){
+                // 再撮影ボタンを押したときにローカルストレージから写真データを削除
+                document.getElementById('retake').addEventListener('click', function(event) {
+                    localStorage.removeItem('photoData');
+                    event.preventDefault(); // フォームの送信を防ぐ
+                    const actionUrl = "/camera?username=" + encodeURIComponent(username);
+                    window.location.href = actionUrl; // リダイレクト
+                });
+            }
+
+
+            // OKボタンを押したときに写真データをバックエンドに送信し、ローカルストレージから削除
+            document.getElementById('ok').addEventListener('click', function(event) {
+                event.preventDefault(); // フォームの送信を防ぐ
+                const actionUrl = "/photosended?username=" + encodeURIComponent(username);
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = actionUrl;
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'photo';
+                input.value = photoData;
+                form.appendChild(input);
+
+                // ユーザー名を追加
+                const usernameInput = document.createElement('input');
+                usernameInput.type = 'hidden';
+                usernameInput.name = 'username';
+                usernameInput.value = username;
+                form.appendChild(usernameInput);
+
+                document.body.appendChild(form);
+                form.submit();
+                // ローカルストレージから写真データを削除
+                localStorage.removeItem('photoData');
+            });
+        });
+    </script>
+</body>
+</html>

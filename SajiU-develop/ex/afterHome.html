@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ゲーム画面</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1e3c72, #001111);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: space-between;
+      color: white;
+    }
+
+    .header {
+      background: rgba(44, 62, 80, 0.9);
+      text-align: center;
+      padding: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.3);
+      border-bottom: 2px solid #ffffff;
+    }
+
+    .progress-bar-container {
+      background: rgba(236, 240, 241, 0.2);
+      height: 30px;
+      width: 80%;
+      margin: 15px auto;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .progress-text {
+      position: absolute;
+      z-index: 2;
+      color: white;
+      font-weight: bold;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #ff416c, #ff4b2b);
+      width: 50%;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      transition: width 0.3s ease-in-out;
+    }
+
+    .game-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60vh;
+      position: relative;
+    }
+
+    .room {
+      width: 70%;
+      height: 100%;
+      background: url('a.jpg') center/cover no-repeat;
+      border-radius: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .character {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(45deg, #00c6ff, #0072ff);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .score-display {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      background: rgba(4, 62, 80, 0.8);
+      color: white;
+      padding: 12px;
+      border-radius: 10px;
+      width: 50%;
+      margin: 10px auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-around;
+      padding: 15px;
+      background: rgba(52, 73, 94, 0.9);
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .button {
+      background: linear-gradient(45deg, #1abc9c, #16a085);
+      color: white;
+      border: none;
+      padding: 14px 22px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 150%;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .button:hover {
+      background: linear-gradient(45deg, #16a085, #1abc9c);
+      transform: scale(1.05);
+    }
+
+    #message {
+      color: red;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">ゲーム画面 - プレイヤー名: ユーザー名</div>
+
+  <div class="progress-bar-container">
+    <div class="progress-text">空腹ゲージ</div>
+    <div class="progress-bar"></div>
+  </div>
+
+  <div class="game-container">
+    <div class="room">
+      <div class="character"></div>
+    </div>
+  </div>
+
+  <div class="score-display">今日の写真を撮ろう: <span id="score">0</span></div>
+
+  <div class="footer">
+    <form id="cameraForm" action="/camera" method="GET">
+      <button id="cameraButton" class="button">写真を撮る</button>
+    </form>
+    <form action="/friend" method="GET">
+      <button class="button">フレンド一覧</button>
+    </form>
+  </div>
+
+  <p id="message">既に撮影済みのため写真は撮れません</p>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cameraButton = document.querySelector('#cameraButton');
+      const message = document.querySelector('#message');
+
+      cameraButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        message.style.display = 'block';
+      });
+    });
+  </script>
+</body>
+</html>

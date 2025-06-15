@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ゲーム画面</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1e3c72, #001111);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: space-between;
+      color: white;
+    }
+
+    .header {
+      background: rgba(44, 62, 80, 0.9);
+      text-align: center;
+      padding: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.3);
+      border-bottom: 2px solid #ffffff;
+    }
+
+    .progress-bar-container {
+    background: rgba(236, 240, 241, 0.2);
+    height: 30px;
+    width: 80%;
+    margin: 15px auto;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  /* 区切り線 */
+  .progress-bar-container::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: repeating-linear-gradient(
+      to right,
+      transparent,
+      transparent 19.8%, /*これ区切り線の色と間隔*/
+      rgba(255, 255, 255, 0.3) 20%, /*これ区切り線の色と間隔*/
+      rgba(0, 0, 0, 0.9) 20.1%,
+      rgba(0, 0, 0, 0.9) 19.9%,
+      transparent 20.2%
+    );
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .progress-text {
+    position: absolute;
+    z-index: 4;
+    color: white;
+    font-weight: bold;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    display: flex;
+    gap: 8px;
+    font-size: 25px;
+    align-items: center;
+    font-family:'Century Gothic', sans-serif;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .progress-0, .progress-100 {
+  position: absolute; /* バーの外に配置 */
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  font-weight: bold;
+  font-family: 'Century Gothic', sans-serif;
+  color: #ffffff94; /* 明るく */
+  /* text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8); 影でくっきり */
+  z-index: 5; /* 最前面 */
+}
+
+.progress-0 {
+  left: 5px; /* 左端に配置 */
+}
+
+.progress-100 {
+  right: 5px; /* 右端に配置 */
+}
+
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #cb0c0c, #ffb041ae);
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    transition: width 0.3s ease-in-out;
+    z-index: 2;
+  }
+
+    .game-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60vh;
+      position: relative;
+    }
+
+    .room {
+      width: 100%;
+      height: 100%;
+      background: url('a.jpg') center/cover no-repeat;
+      border-radius: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); */
+    }
+
+    .character {
+      width: 250px;
+      height: 350px;
+      background: url('b.jpg') center/cover no-repeat;
+      position: absolute;
+      bottom: 20px;
+      /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); */
+    }
+
+    .score-display {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      background: rgba(4, 62, 80, 0.8);
+      color: white;
+      padding: 12px;
+      border-radius: 10px;
+      width: 50%;
+      margin: 10px auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-around;
+      padding: 15px;
+      background: rgba(52, 73, 94, 0.9);
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      background: linear-gradient(45deg, #1abc9c, #16a085);
+      color: white;
+      border: none;
+      padding: 14px 22px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      flex-grow: 1;
+      max-width: 200px;
+      min-width: 120px;
+    }
+
+    .button:hover {
+      background: linear-gradient(45deg, #16a085, #1abc9c);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">プレイヤー名: <span id="username"></span></div>
+  <div class="body" style="text-align: center; font-weight: bold; margin-top: 10px;">元気ゲージ</div>
+
+  <div class="progress-bar-container">
+    <div class="progress-text">
+      <span class="progress-text" id="gage_num"></span> <!-- ここにゲージの値を表示 -->
+    </div>
+    <div class="progress-bar"></div>
+    <div class="progress-0">0</div>
+    <div class="progress-100">100</div>
+  </div>
+
+  <div class="game-container">
+    <div class="room">
+      <div class="character"></div>
+    </div>
+  </div>
+
+  <div class="score-display">スコア: <span id="score">0</span></div>
+
+  <div class="footer">
+    <form id = "cameraForm" action="/camera" method="GET">
+        <button id="cameraButton" class="button">写真を撮る</button>
+    </form>
+    <form id = "friendForm" action="/friend" method="GET">
+      <button class="button">フレンド一覧</button>
+    </form>
+  </div>
+
+  <p id="message" style="display: none; color: red;">既に撮影済みのため写真は撮れません</p>
+  <button id="clearStorageButton">ローカルストレージをクリア</button>
+  
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get("username");
+    document.addEventListener('DOMContentLoaded', function() {
+    const cameraButton = document.querySelector('#cameraButton');
+    const message = document.querySelector('#message');
+    const new_gauge = params.get("gauge");
+    let gage_num=80;
+    const gaugenumElement = document.createElement("p");
+    if (new_gauge) {
+        document.querySelector('.progress-bar').style.width = `${new_gauge}%`;
+        gaugenumElement.textContent = `${new_gauge}%`;
+        document.querySelector('.progress-text').appendChild(gaugenumElement);
+    } else {
+      document.querySelector('.progress-bar').style.width = `80%`;
+      gaugenumElement.textContent = `80%`;
+      document.querySelector('.progress-text').appendChild(gaugenumElement);
+      document.querySelector('.character').style.background = `url('chara/99_80pig.png') center/cover no-repeat`;
+    }
+
+    // ゲージによるキャラの変化
+    const gaugeWidth = parseInt(document.querySelector('.progress-bar').style.width);
+    if(gaugeWidth === 100){
+      document.querySelector('.character').style.background = `url('chara/100pig.gif') center/cover no-repeat`;
+    } else if(gaugeWidth < 100 && gaugeWidth >= 80){
+      document.querySelector('.character').style.background = `url('chara/99_80pig.png') center/cover no-repeat`;
+    } else if(gaugeWidth < 80 && gaugeWidth >= 60){
+      document.querySelector('.character').style.background = `url('chara/79_60pig.png') center/cover no-repeat`;
+    } else if(gaugeWidth < 60 && gaugeWidth >= 40){
+      document.querySelector('.character').style.background = `url('chara/59_40pig.png') center/cover no-repeat`;
+    } else if(gaugeWidth < 40 && gaugeWidth >= 20){
+      document.querySelector('.character').style.background = `url('chara/pig39_20.gif') center/cover no-repeat`;
+    } else if(gaugeWidth < 20 && gaugeWidth > 0){
+      document.querySelector('.character').style.background = `url('chara/19_1pig.png') center/cover no-repeat`;
+    } else if(gaugeWidth === 0){
+      document.querySelector('.character').style.background = `url('chara/gravepig.png') center/cover no-repeat`;
+    }
+    
+    cameraButton.addEventListener('click', function(event) {
+        if (localStorage.getItem('photoTaken') === 'true') {
+            event.preventDefault();
+            message.style.display = 'block';
+        }
+    });
+    clearStorageButton.addEventListener('click', function() {
+        localStorage.clear();
+        alert('ローカルストレージがクリアされました');
+    });
+    if (username) {
+        // ユーザー名を元にサーバーにリクエスト
+        fetch("/user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.username && data.initial_image_path) {
+              // サーバーからのレスポンスでユーザー情報を設定
+              document.getElementById("username").textContent = `${data.username}`;
+            }
+            if (data.today_score){
+              document.getElementById("score").textContent = `${data.today_score}`;
+            }
+            if(data.initial_image_path){
+              // ここで背景画像を変更
+              document.querySelector('.room').style.background = `url('${data.initial_image_path}') center/cover no-repeat`;
+            }
+        })
+            // ボタンがクリックされたときにURLにユーザー名を追加
+            document.getElementById("cameraForm").addEventListener("submit", function(event) {
+                event.preventDefault(); // フォームの送信を防ぐ
+                const actionUrl = "/camera?username=" + encodeURIComponent(username);
+                window.location.href = actionUrl; // リダイレクト
+            });
+            // ボタンがクリックされたときにURLにユーザー名を追加
+            document.getElementById("friendForm").addEventListener("submit", function(event) {
+                event.preventDefault(); // フォームの送信を防ぐ
+                const actionUrl = "/friend?username=" + encodeURIComponent(username) + "&gauge=" + encodeURIComponent(document.querySelector('.progress-bar').style.width);
+                window.location.href = actionUrl; // リダイレクト
+            });
+        }
+    });
+  </script>
+</body>
+</html>

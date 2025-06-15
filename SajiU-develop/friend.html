@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>フレンド一覧</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1e3c72, #001111);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    .header {
+      background: rgba(44, 62, 80, 0.9);
+      width: 100%;
+      text-align: center;
+      padding: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.3);
+      border-bottom: 2px solid #ffffff;
+      position: fixed;
+      top: 0;
+      left: 20;
+    }
+
+    #friendsList {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 80px;
+      width: 80%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+      font-size: 18px;
+    }
+
+    .score-container p {
+  font-size: 28px;
+  color: white;
+  margin: 10;
+}
+
+.score-container #totalScore {
+  font-size: 34px;
+  background-image: linear-gradient(90deg, #fF5555, #ff0000); /* グラデーションカラー */
+  background-clip: text; /* テキストの中に背景画像をクリップ */
+  color: transparent; /* 背景のグラデーションをテキストに適用するため透明に */
+  font-weight: bold;
+}
+
+    .button-group {
+      display: flex;
+      justify-content: center; /* 横並びにする */
+      gap: 20px; /* ボタン間のスペースを設定 */
+      margin-top: 30px;
+    }
+
+    button {
+      background: linear-gradient(45deg, #1abc9c, #16a085);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      width: 150px;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, #16a085, #1abc9c);
+      transform: scale(1.05);
+    }
+
+    .progress-bar-container {
+    background: rgba(236, 240, 241, 0.2);
+    height: 30px;
+    width: 80%;
+    margin: 15px auto;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  /* 区切り線 */
+  .progress-bar-container::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: repeating-linear-gradient(
+      to right,
+      transparent,
+      transparent 19.8%, /*これ区切り線の色と間隔*/
+      rgba(255, 255, 255, 0.3) 20%, /*これ区切り線の色と間隔*/
+      rgba(0, 0, 0, 0.9) 20.1%,
+      rgba(0, 0, 0, 0.9) 19.9%,
+      transparent 20.2%
+    );
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .progress-text {
+    position: absolute;
+    z-index: 4;
+    color: white;
+    font-weight: bold;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    display: flex;
+    gap: 8px;
+    font-size: 25px;
+    align-items: center;
+    font-family:'Century Gothic', sans-serif;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .progress-0, .progress-100 {
+  position: absolute; /* バーの外に配置 */
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  font-weight: bold;
+  font-family: 'Century Gothic', sans-serif;
+  color: #ffffff94; /* 明るく */
+  /* text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8); 影でくっきり */
+  z-index: 5; /* 最前面 */
+}
+
+.progress-0 {
+  left: 5px; /* 左端に配置 */
+}
+
+.progress-100 {
+  right: 5px; /* 右端に配置 */
+}
+
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #cb0c0c, #ffb041ae);
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    transition: width 0.3s ease-in-out;
+    z-index: 2;
+  }
+
+  .next-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #cb0c0c, #ffb041ae);
+    width: 90%;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    transition: width 0.3s ease-in-out;
+    z-index: 2;
+  }
+
+    .error {
+      color: red;
+      text-align: center;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">フレンド一覧</div>
+  <div>
+    <ul id="friendsList"></ul>
+  </div>
+
+  <div class="error" id="errorMessage"></div>
+  
+  <p style="text-align: center; font-weight: bold; font-size: 1px;"></p>
+  <div class="body" style="text-align: center; font-weight: bold; margin-top: 10px;">元気ゲージ</div>
+
+  <div class="progress-bar-container">
+    <div class="progress-text" id="nowgauge" style="text-align: center; font-weight: bold; margin-top: 10px;"></div>
+    <div class="progress-bar"></div>
+    <div class="progress-0">0</div>
+    <div class="progress-100">100</div>
+  </div>
+
+  <div class="body" style="text-align: center; font-weight: bold; font-size: 44px; margin-top: 7px;">⇩ </div>
+
+  <div class="body" style="text-align: center; font-weight: bold; margin-top: 10px;">元気ゲージ</div>
+
+  <div class="progress-bar-container">
+    <div class="progress-text" id="nextgauge" style="text-align: center; font-weight: bold; margin-top: 7px;"></div>
+    <div class="next-progress-bar"></div>
+    <div class="progress-0">0</div>
+    <div class="progress-100">100</div>
+  </div>
+
+  <div class="button-group">
+    <form id="gageForm" action="/gage" method="get">
+      <button>更新</button>
+    </form>
+
+    <form id="homeForm" action="/toppage" method="get">
+      <button>戻る</button>
+    </form>
+  </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const username = params.get("username");
+        const now_gauge = parseInt(params.get("gauge"));
+        let next_gauge = 0;
+        if (username) {
+            // ユーザー名を元にサーバーにリクエスト
+            fetch("/friend", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data) && data.length > 0) {
+                    const friendsList = document.getElementById("friendsList");
+                    let plusScore = 0;
+                    let minusScore = 0;
+                    let minus = 0;
+                    let pointResult = 0;
+                    let member = 0;
+                    data.forEach(friend => {
+                        member += 1;
+                        const friendElement = document.createElement("p");
+                        friendElement.textContent = `${friend.user_name} : ${friend.today_score}`;
+                        friendsList.appendChild(friendElement);
+                        if (friend.today_score >= 50) {
+                            plusScore += (friend.today_score-50);
+                        } else {
+                            minusScore += (friend.today_score-50);
+                            minus = 1;
+                        }
+                    });
+                    if (minus == 1) {
+                      plusScore = plusScore/2;
+                    }
+                    pointResult = plusScore + minusScore - member*20;
+                    next_gauge = parseInt(now_gauge) + Math.floor(pointResult/6);
+                    if(next_gauge > 100) {
+                        next_gauge = 100;
+                    } else if(next_gauge < 0) {
+                        next_gauge = 0;
+                    }
+                    
+                    const nowgaugeElement = document.createElement("p");
+                    nowgaugeElement.textContent = `今:${now_gauge}%`;
+                    document.getElementById("nowgauge").appendChild(nowgaugeElement);
+                    const nextgaugeElement = document.createElement("p");
+                    nextgaugeElement.textContent = `次：${next_gauge}%`;
+                    document.getElementById("nextgauge").appendChild(nextgaugeElement);
+
+                    document.querySelector('.progress-bar').style.width = `${now_gauge}%`;
+                    document.querySelector('.next-progress-bar').style.width = `${next_gauge}%`;
+
+                } else {
+                    document.getElementById("friendsList").textContent = "フレンドが見つかりません";
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching friends:", error);
+                document.getElementById("friendsList").textContent = "エラーが発生しました";
+            });
+        }
+        // 戻るボタンがクリックされたときにURLにユーザー名を追加
+        document.getElementById("homeForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // フォームの送信を防ぐ
+            const actionUrl = "/toppage?username=" + encodeURIComponent(username) + "&gauge=" + encodeURIComponent(now_gauge);
+            window.location.href = actionUrl; // リダイレクト
+        });
+        // 更新ボタンがクリックされたときにURLにユーザー名を追加
+        document.getElementById("gageForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // フォームの送信を防ぐ
+            let actionUrl;
+            if (next_gauge == 0){
+              actionUrl = "/dead?username=" + encodeURIComponent(username);
+            } else {
+              actionUrl = "/toppage?username=" + encodeURIComponent(username) + "&gauge=" + encodeURIComponent(next_gauge); 
+            }
+            window.location.href = actionUrl; // リダイレクト
+        });
+    </script>
+</body>
+</html>

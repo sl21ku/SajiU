@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>元気ゲージゼロ</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #2c3e50, #1a1a1a);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            font-size: 48px;
+            text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.3);
+        }
+        p {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        button {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 14px 22px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: linear-gradient(45deg, #c0392b, #e74c3c);
+            transform: scale(1.05);
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+    <script>
+        function changeImage() {
+            var img = document.getElementById('changeableImage');
+            img.src = img.src.includes('chara/pig0.gif') ? 'chara/gravepig.png' : 'chara/pig0.gif';
+        }
+    </script>
+</head>
+<body>
+    <img id="changeableImage" src="chara/pig0.gif" alt="Image" style="width: 50%;" onclick="changeImage()">
+
+    <h1>そんな...</h1>
+    <p>元気ゲージが0になりました</p>
+    <form id="backHome" action="/toppage" method="get">
+        <button>ホームに戻る</button>
+    </form>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const username = params.get("username");
+        document.getElementById('backHome').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const actionUrl = "/toppage?username=" + encodeURIComponent(username) + "&gauge=0";
+            window.location.href = actionUrl; // リダイレクト
+        });
+    </script>
+</body>
+</html>

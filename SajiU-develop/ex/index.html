@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ホーム画面</title>
+</head>
+<body>
+    <h1>キャラクターがいるよ</h1>
+    <p id="userHome">～のホーム画面</p>
+    <p>@~@</p>
+    <form id="cameraForm" action="/camera" method="get">
+        <button id="cameraButton">写真を撮る</button>
+    </form>
+    <form action="/friend" method="get">
+        <button>フレンド一覧</button>
+    </form>
+    <br>
+    <br>
+    <br>
+    <button id="clearStorageButton">ローカルストレージをクリア</button>
+    <p id="message" style="color: red; display: none;">既に撮影済みのため写真は撮れません</p>
+    <script>
+            const params = new URLSearchParams(window.location.search);
+            const username = params.get("username");
+            document.addEventListener('DOMContentLoaded', function() {
+            const cameraButton = document.querySelector('#cameraButton');
+            const message = document.querySelector('#message');
+
+            cameraButton.addEventListener('click', function(event) {
+                if (localStorage.getItem('photoTaken') === 'true') {
+                    event.preventDefault();
+                    message.style.display = 'block';
+                }
+                    
+            });
+            clearStorageButton.addEventListener('click', function() {
+                localStorage.clear();
+                alert('ローカルストレージがクリアされました');
+            });
+            if (username) {
+                // ユーザー名を元にサーバーにリクエスト
+                fetch("/user", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.username && data.initial_image_path) {
+                        // サーバーからのレスポンスでユーザー情報を設定
+                        document.getElementById("userHome").textContent = `${data.username}のホーム画面`;
+                    }
+                })
+                }
+
+                // ボタンがクリックされたときにURLにユーザー名を追加
+                document.getElementById("cameraForm").addEventListener("submit", function(event) {
+                    event.preventDefault(); // フォームの送信を防ぐ
+                    const actionUrl = "/camera?username=" + encodeURIComponent(username);
+                    window.location.href = actionUrl; // リダイレクト
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>カメラ起動</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1e3c72, #001111);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.3);
+    }
+
+    #video {
+      border: 5px solid #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    #canvas {
+      display: none;
+      border: 5px solid #fff;
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    button {
+      background: linear-gradient(45deg, #1abc9c, #16a085);
+      color: white;
+      border: none;
+      padding: 14px 22px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      margin: 10px;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, #16a085, #1abc9c);
+      transform: scale(1.05);
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>カメラ起動</h1>
+
+  <video id="video" width="360" height="640" autoplay></video>
+
+  <div class="button-container">
+    <button id="snap">写真を撮る</button>
+    <button id="useFrontCamera">インカメラ</button>
+    <button id="useBackCamera">アウトカメラ</button>
+  </div>
+
+  <canvas id="canvas" width="360" height="640"></canvas>
+
+  <script src="/camera.js"></script>
+</body>
+</html>
